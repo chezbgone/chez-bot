@@ -1,36 +1,31 @@
-import argparse
-import os
+from datetime import datetime, timedelta
+from time import sleep
 
-import discord
-from discord.ext import tasks
-import dotenv
+from discord.ext import commands, tasks
+from pytz import timezone
 
-parser = argparse.ArgumentParser(description='Send a Calvin and Hobbes comic'
-                                             ' to a discord server.')
-parser.add_argument('channelID')
+class DailyCah(commands.Cog):
+    def __init__(self, bot, channelID: int):
+        self.bot = bot
+        self.channelID = channelID
+        self.channel = None
+        self.counter = 0
 
-class CahClient(discord.Client):
-    def __init__(self, channel_id: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.channel_id = channel_id
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.channel = self.bot.get_channel(self.channelID)
         self.send_cah.start()
 
-    async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-
-    @tasks.loop(seconds=60)
+    @tasks.loop(hours=24)
     async def send_cah(self):
-        channel = self.get_channel(self.channel_id)
-        await channel.send('hello')
+        central_time = timezone('America/Chicago')
+        year, month, date, *_ = datetime.now(tz=central_time).timetuple()
+        link = f'https://www.gocomics.com/calvinandhobbes/{year}/{month}/{date}'
+        await self.channel.send(link)
 
     @send_cah.before_loop
     async def before_send_cah(self):
-        await self.wait_until_ready()
-
-
-if __name__ == '__main__':
-    args = parser.parse_args()
-    dotenv.load_dotenv()
-    DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-    CahClient(int(args.channelID)).run(DISCORD_TOKEN)
+        central_time = timezone('America/Chicago')
+        tomorrow = datetime.now(tz=central_time) + timedelta(days=1)
+        tomorrow = tomorrow.replace(hour=5, minute=0, second=0, microsecond=0)
+        sleep((tomorrow - datetime.now(tz=central_time)).total_seconds())
