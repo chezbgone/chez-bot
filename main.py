@@ -10,7 +10,7 @@ if __name__ == '__main__':
     DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
     CAH_CHANNEL_ID = int(os.getenv('CAH_CHANNEL'))
 
-    bot = commands.Bot(command_prefix='<@832757137158701067>')
+    bot = commands.Bot(command_prefix='<@832757137158701067> ')
 
     @bot.event
     async def on_ready():
