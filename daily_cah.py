@@ -9,7 +9,6 @@ class DailyCah(commands.Cog):
         self.bot = bot
         self.channelID = channelID
         self.channel = None
-        self.counter = 0
 
     @commands.Cog.listener()
     async def on_ready(self):

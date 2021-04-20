@@ -2,10 +2,9 @@ import os
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from send_cah import DailyCah
+from daily_cah import DailyCah
 
 if __name__ == '__main__':
-
     load_dotenv()
     DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
     CAH_CHANNEL_ID = int(os.getenv('CAH_CHANNEL'))
