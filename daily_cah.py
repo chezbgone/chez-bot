@@ -25,6 +25,8 @@ class DailyCah(commands.Cog):
     @send_cah.before_loop
     async def before_send_cah(self):
         central_time = timezone('America/Chicago')
-        tomorrow = datetime.now(tz=central_time) + timedelta(days=1)
-        tomorrow = tomorrow.replace(hour=5, minute=0, second=0, microsecond=0)
-        sleep((tomorrow - datetime.now(tz=central_time)).total_seconds())
+        now = datetime.now(tz=central_time)
+        five_am = now.replace(hour=5, minute=0, second=0, microsecond=0)
+        if five_am < now:
+            five_am += timedelta(hours=24)
+        sleep((five_am - now).total_seconds())
